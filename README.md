@@ -15,6 +15,8 @@ Installation
 -----
 
 ```
+git clone git@github.com:RobertoNeglia/gpustat-web-plus.git
+cd gpustat-web-plus
 pip install -e .
 ```
 
