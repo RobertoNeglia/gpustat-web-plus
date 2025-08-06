@@ -1,11 +1,11 @@
-gpustat-web
+gpustat-web+
 ===========
 
-A web interface of [`gpustat`][gpustat] ---
-aggregate `gpustat` across multiple nodes.
+A web interface of [`gpustat+`][gpustat+] ---
+aggregate `gpustat+` across multiple nodes.
 
 <p align="center">
-  <img src="https://github.com/wookayin/gpustat-web/raw/master/screenshot.png" width="800" height="192" />
+  <img src="screenshot+.png" width="800" height="256" />
 </p>
 
 **NOTE**: This project is in alpha stage. Errors and exceptions are not well handled, and it might use much network resources. Please use at your own risk!
@@ -15,7 +15,7 @@ Installation
 -----
 
 ```
-pip install gpustat-web
+pip install -e .
 ```
 
 Python 3.6+ is required.
@@ -27,7 +27,7 @@ Launch the application as follows. A SSH connection will be established to each 
 Make sure `ssh <host>` works under a proper authentication scheme such as SSH authentication.
 
 ```
-gpustat-web --port 48109 HOST1 [... HOSTN]
+gpustat-web+ --port 48109 HOST1 [... HOSTN]
 ```
 
 You might get "Host key is not trusted for `<host>`" errors. You'll have to accept and trust SSH keys of the host for the first time (it's stored in `~/.ssh/known_hosts`);
@@ -37,7 +37,7 @@ Note that asyncssh [does NOT obey](https://github.com/ronf/asyncssh/issues/108) 
 (e.g. alias, username, keyfile), so any config in `~/.ssh/config` might not be picked up.
 
 
-[gpustat]: https://github.com/wookayin/gpustat/
+[gpustat+]: https://github.com/RobertoNeglia/gpustat-plus
 
 
 ### Endpoints
@@ -63,19 +63,9 @@ Troubleshoothing: Verify SSL/TLS handshaking (if TLS connections cannot be estab
 openssl s_client -showcerts -connect YOUR_HOST.com:PORT < /dev/null
 ```
 
-
-### More Examples
-
-To see CPU usage as well:
-
-```
-python -m gpustat_web --exec 'gpustat --color --gpuname-width 25 && echo -en "CPU : \033[0;31m" && cpu-usage | ascii-bar 27'
-```
-
-
 License
 -------
 
-MIT License
+[MIT License](LICENSE)
 
-Copyright (c) 2018-2023 Jongwook Choi
+Copyright (c) 2018-2023 Jongwook Choi, 2025 Roberto Neglia
