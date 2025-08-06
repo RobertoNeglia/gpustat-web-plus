@@ -1,72 +1,96 @@
 <!doctype html>
 <html>
-  <head>
-    <title>gpustat-web: {{http_host}}</title>
-    <style>
-        body { overflow-x: scroll; }
-        nav.header { font-family: monospace; margin-bottom: 10px; }
-        nav.header a, nav.header a:visited { color: #329af0; text-decoration: none; }
-        nav.header a:hover { color: #a3daff; }
 
-        #gpustat { line-height: 0.95; }
-        pre.ansi2html-content { white-space: pre; word-wrap: normal; }  /* no line break */
-    </style>
+<head>
+  <title>gpustat-web-plus: {{http_host}}</title>
+  <style>
+    body {
+      overflow-x: scroll;
+    }
 
-    {{ ansi2html_headers | safe }}
-  </head>
+    nav.header {
+      font-family: monospace;
+      margin-bottom: 10px;
+    }
 
-  <body class="body_foreground body_background" style="font-size: normal;" >
+    nav.header a,
+    nav.header a:visited {
+      color: #329af0;
+      text-decoration: none;
+    }
 
-    <nav class="header">
-      <a href="https://github.com/wookayin/gpustat-web" target="_blank">gpustat-web</a>
-        by <a href="https://github.com/wookayin" target="_blank">@wookayin</a>
-      <a href="javascript:clearTimeout(window.timer);" style="margin-left: 20px; color: #666666;"
-         onclick="this.style.display='none';">[turn off auto-refresh]</a>
-    </nav>
+    nav.header a:hover {
+      color: #a3daff;
+    }
 
-    <div id="gpustat">
-      <pre class="ansi2html-content" id="gpustat-content">
+    #gpustat {
+      line-height: 0.95;
+    }
+
+    pre.ansi2html-content {
+      white-space: pre;
+      word-wrap: normal;
+    }
+
+    /* no line break */
+  </style>
+
+  {{ ansi2html_headers | safe }}
+</head>
+
+<body class="body_foreground body_background" style="font-size: normal;">
+
+  <nav class="header">
+    <a href="https://github.com/RobertoNeglia/gpustat-web-plus" target="_blank">gpustat-web-plus</a>
+    by <a href="https://github.com/RobertoNeglia" target="_blank">@RobertoNeglia</a>
+    <a href="javascript:clearTimeout(window.timer);" style="margin-left: 20px; color: #666666;"
+      onclick="this.style.display='none';">[turn off auto-refresh]</a>
+  </nav>
+
+  <div id="gpustat">
+    <pre class="ansi2html-content" id="gpustat-content">
       </pre>
-    </div>
+  </div>
 
-  </body>
+</body>
 
-  <script>
-        // On Load, fetch body with a simple ajax call
-        if(window.fetch) {
-          fetch('gpustat.html' + (location.search || '?') + '&full=0', {method: 'GET'}
-          ).then(function(response) {
-            return response.text();
-          }).then(function(html) {
-            document.getElementById('gpustat-content').innerHTML = html;
-          });
-        }
+<script>
+  // On Load, fetch body with a simple ajax call
+  if (window.fetch) {
+    fetch('gpustat.html' + (location.search || '?') + '&full=0', { method: 'GET' }
+    ).then(function (response) {
+      return response.text();
+    }).then(function (html) {
+      document.getElementById('gpustat-content').innerHTML = html;
+    });
+  }
 
-        // Use websocket
-        var ws_protocol = (location.protocol == 'https:' ? 'wss:' : 'ws:');
-        var ws = new WebSocket(ws_protocol + "//{{http_host}}/ws");
-        var update = function() {
-          ws.send(JSON.stringify({
-            'message': 'query',
-            'nodes': new URLSearchParams(location.search).get('nodes'),
-          }));
-        };
+  // Use websocket
+  var ws_protocol = (location.protocol == 'https:' ? 'wss:' : 'ws:');
+  var ws = new WebSocket(ws_protocol + "//{{http_host}}/ws");
+  var update = function () {
+    ws.send(JSON.stringify({
+      'message': 'query',
+      'nodes': new URLSearchParams(location.search).get('nodes'),
+    }));
+  };
 
-        ws.onopen = function(e) {
-          console.log('Websocket connection established', ws);
-          update();
-        };
-        ws.onerror = function(error) {
-          console.log("onerror", error);
-        };
-        ws.onmessage = function(e) {
-          var msg = e.data;
-          console.log('Received data, length = ' + msg.length + ', ' + new Date().toString());
-          document.getElementById('gpustat-content').innerHTML = msg;
-        };
-        window.onbeforeunload = function() {
-          ws.close();  // close websocket client on exit
-        };
-        window.timer = setInterval( function() { update(); }, {{ interval }});
-  </script>
+  ws.onopen = function (e) {
+    console.log('Websocket connection established', ws);
+    update();
+  };
+  ws.onerror = function (error) {
+    console.log("onerror", error);
+  };
+  ws.onmessage = function (e) {
+    var msg = e.data;
+    console.log('Received data, length = ' + msg.length + ', ' + new Date().toString());
+    document.getElementById('gpustat-content').innerHTML = msg;
+  };
+  window.onbeforeunload = function () {
+    ws.close();  // close websocket client on exit
+  };
+  window.timer = setInterval(function () { update(); }, {{ interval }});
+</script>
+
 </html>
